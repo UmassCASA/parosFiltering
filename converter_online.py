@@ -12,7 +12,7 @@ from scipy.signal import butter, lfilter, detrend, welch, spectrogram
 from scipy.signal.windows import hamming
 from influxdb_client.client.write_api import SYNCHRONOUS
 from datetime import datetime, timedelta
-from apiikey_access import api_key
+# from apiikey_access import api_key
 from influxdb_client import InfluxDBClient, Point
 from influxdb_client.client.write_api import SYNCHRONOUS
 import matplotlib.dates as mdates
@@ -37,7 +37,7 @@ dB = True # plot power in dB, True or False
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""" api_token setting """""""""""""""""""""""""""""""""
-influxdb_apikey = api_key() # download your api_token from influxdB. Remember not to save it in the public file!
+influxdb_apikey =  # download your api_token from influxdB. Remember not to save it in the public file!
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 device_name = box + "-" + sensor_id
@@ -161,34 +161,6 @@ def calculate_derivatives(df):
     second_derivative_df = pd.DataFrame(second_derivative.fillna(0), columns=['SecondDerivative'])
 
     return first_derivative_df, second_derivative_df
-
-def process_segment(data_segment):
-
-    # Apply the FFT to the data segment
-    fft_output = np.fft.fft(data_segment)
-    # Take the absolute value (magnitude) of the FFT output
-    magnitude = np.abs(fft_output)
-    squared_magnitude = np.square(magnitude)
-    # Sum the magnitude values of the FFT output
-    sum_magnitude = np.sum(squared_magnitude[:len(squared_magnitude)//2])
-    # Return the sum of magnitudes
-    return float(sum_magnitude)
-
-def gen_power_data(raw, exp):
-    fft_window_size = 2**A
-
-    # Process each segment of data
-    results = []
-    for i in range(0, len(raw)-fft_window_size+1):
-        data_segment = [raw[i] - float(exp[i]) for i in range(fft_window_size)]
-        result = process_segment(data_segment)
-        results.append(float(result))
-    # add None at the end of the results list(y axis) in order to match the size of x axis
-    results += [None] * (fft_window_size - 1)
-    # convert list to array
-    result_array = [ x for x in results]
-    
-    return result_array
 
 ## function of calculating the FFT of the residual(raw - ES)
 def fft_ac(df):
